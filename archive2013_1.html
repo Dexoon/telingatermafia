@@ -1,0 +1,519 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Результаты игр в «Мафию»</title>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <style type="text/css">
+    div, li, ul, p {margin:0; padding:0}
+    li {list-style:none}
+    body {font:12px Verdana; color: #222; margin:0 auto}
+
+    h1, h2, h3, h4, h5, h6 {font-size:100%; margin:0; font-weight:normal}
+
+    h1 {font-size:200%; color:#A30000}
+    h2 {font-size:150%; color:#A30000}
+
+    .b-games-li {
+      display:inline-block; vertical-align:top;
+      width:200px;
+      margin:10px; padding:10px 15px;
+      border-style:solid;
+      border-width:1px;
+      border-color:#eee #ccc #ccc #eee;
+    }
+    .b-games-li h2 {margin-bottom:.1em}
+    .b-games-li-date {margin-bottom:.5em; color:#666}
+    .b-games-li-comment {margin-bottom:.5em; color:#999; font-size:80%}
+    .b-games-li-players {margin-top:10px}
+    .b-games-li-player {margin-right:10px; position:relative; padding-bottom:5px; font-size:85%}
+    .b-games-li-points {position:absolute; top:0; right:-10px; font-weight:bold; color:#A30000}
+
+    .b-final,
+    .b-rating {
+      max-width: 400px; width:100%;
+      margin:10px; padding:10px 15px;
+      border-style:solid;
+      border-width:1px;
+      border-color:#eee #ccc #ccc #eee;
+      font-size:90%;
+      background:#fffff7;
+      float:left;
+    }
+    .b-rating-table {margin-top:1em; border-collapse: collapse; border-spacing:0;}
+    .b-rating th {padding:0 0 3px 5px; text-align:left; color:#999; font-size:90%}
+    .b-rating td {padding:3px 0 3px 0; text-align:right}
+    .b-rating td.b-rating-name {text-align:left; padding-right:10px}
+    .b-rating td.b-rating-rating {font-weight:bold; padding-right:0; color:#222}
+    .b-rating td.b-rating-row {font-size:80%; padding-right:10px}
+    .b-rating-player__1 td.b-rating-rating {color:#c70}
+    .b-rating-player__2 td.b-rating-rating {color:#aaa}
+    .b-rating-player__3 td.b-rating-rating {color:#960}
+
+    .b-show-all {text-align:center; border:1px solid #f0f0f0; margin:5px 0}
+    .b-show-all:hover {background:#f0f0f0}
+    .b-show-all-link {display:block; width:100%; color:#A30000; padding:3px 0}
+
+    .b-final {
+      margin-right:50px; padding:10px 45px;
+      width:auto;
+      background:#ffeded;
+    }
+    .b-final th {padding:5px 0 5px 0; text-align:left; color:#999; font-size:90%}
+    .b-final td {padding:2px 8px 2px 0}
+    .b-final-gold {color:#c70; font-weight:bold}
+    .b-final-gold td {padding-bottom:5px}
+
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" language="javascript" charset="utf-8">
+    var records = [];
+    var players = [];
+    $(function(){
+      $('li.b-games-li-player').each(function(i){
+        points = Number($(this).text().replace(/[^0-9]/g,''));
+        player = $(this).text().replace(/ [0-9]*$/,'');
+        records.push({player:player, points:points});
+      });
+
+      $(records).each(function(i,record){
+        var j = findPlayer(record['player']);
+        if(j == -1){
+          players.push({
+            name: record['player'],
+            points: record['points'],
+            visits: 1,
+            rating: record['points'] + 1
+          });
+        } else {
+          players[j]['points'] += record['points'];
+          players[j]['visits'] += 1;
+          players[j]['rating'] = players[j]['points'] + players[j]['visits'];
+        }
+      });
+
+      players.sort(function(a,b){return b['rating']-a['rating']})
+
+      $(players).each(function(i,player){
+        addPlayerRow(player)
+      });
+
+      $('.b-rating-player').slice(14).hide();
+
+      $('.b-rating-player').slice(1,4).each(function(i,s){
+          $(this).addClass('b-rating-player__'+(i+1));
+      });
+
+      $('.b-show-all-link').click(function(){
+        $('.b-rating-player').slice(14).toggle();
+        tmp_text = $(this).data('alt');
+        $(this).data('alt',$(this).html());
+        $(this).html(tmp_text);
+        return false;
+      });
+    });
+
+    function findPlayer(name){
+      var res = -1;
+      $(players).each(function(i,p){
+        if(p['name']==name) res = i;
+      });
+      return res;
+    };
+
+    function addPlayerRow(player){
+      row_number = $('.b-rating-player').length;
+      var row = $('.b-rating-player').first().clone();
+      if(player['name'] == 'Тимофей Манько')
+        row.find('.b-rating-row').html(jQuery('<img>').attr('src', 'gold.png').attr('alt', 'Победитель финального стола'));
+      else
+        row.find('.b-rating-row').html(row_number);
+      row.find('.b-rating-name').html(player['name']);
+      row.find('.b-rating-points').html(player['points']);
+      row.find('.b-rating-visits').html(player['visits']);
+      row.find('.b-rating-rating').html(player['rating']);
+      $('.b-rating-table').append(row.show());
+      return true;
+    }
+  </script>
+</head>
+<body>
+  <div class="b-rating">
+    <h1>Рейтинг игроков. Второй сезон</h1>
+    <a href="archive2012.html">Первый сезон(архив)</a>
+    <table class="b-rating-table">
+      <thead>
+        <th></th> <th>Игрок</th> <th title="Получил голосов за лучшего игрока">Голоса</th> <th title="Сколько игр посетил игрок">Посещения</th> <th title="Голоса + Посещения">Рейтинг</th>
+      </thead>
+    	<tr class="b-rating-player" style="display:none">
+        <td class="b-rating-row"></td>
+        <td class="b-rating-name"></td>
+        <td class="b-rating-points"></td>
+        <td class="b-rating-visits"></td>
+        <td class="b-rating-rating"></td>
+    	</tr>
+    </table>
+    <div class="b-show-all">
+      <a href="#" class="b-show-all-link" data-alt="Десятка лучших">Показать всех</a>
+    </div>
+  </div>
+  <div style="clear:both"></div>
+  <ul class="b-games">
+    <li class=b-games-li>
+      <h2>17-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date"> 15-ое марта 2013 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Мария Комарова <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Екатерина Макарова <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Владимир Бовшук <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Никита Григорьев <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Вячеслав Сергеев <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Соня Стомахина</li>
+        <li class="b-games-li-player">Григорий Телингатер</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>16-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date"> 1 марта 2013 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Владимир Бовшук <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Юлия Стриганова <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Екатерина Макарова</li>
+        <li class="b-games-li-player">Ольга Бебчук</li>
+        <li class="b-games-li-player">Никита Токарь</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>15-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date"> 22 февраля 2013 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Мария Голубкова <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Сергей Кузин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Инна Михалева <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Андрей Хмелев</li>
+        <li class="b-games-li-player">Екатерина Петрунина</li>
+        <li class="b-games-li-player">Мария Арискина</li>
+        <li class="b-games-li-player">Владимир Бовшук</li>
+        <li class="b-games-li-player">Сергей Лыжин</li>
+        <li class="b-games-li-player">Ольга Антонова</li>
+        <li class="b-games-li-player">Григорий Телингатер</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>14-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date"> 15 февраля 2013 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Сергей Кузин <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Владимир Козлов <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Мария Арискина <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Антон Зобов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Екатерина Бредина</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>13-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date"> 8 февраля 2013 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Мария Голубкова <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Сергей Кузин <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Максим Ляпин <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Василий Бородин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Галина Милованова <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Екатерина Макарова</li>
+        <li class="b-games-li-player">Александр Журавлев</li>
+        <li class="b-games-li-player">Ольга Хамитова</li>
+        <li class="b-games-li-player">Алексей Дремов</li>
+        <li class="b-games-li-player">Анастасия Кириченко</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>12-ая игра в кафе «Лето»</h2>
+      <p class="b-games-li-date">1 февраля 2013 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Мария Голубкова <p class="b-games-li-points">12</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Галина Милованова <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Сергей Кузин <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Андрей Сухотин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Иван Цепелев</li>
+        <li class="b-games-li-player">Иван Карпов</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>11-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">25 января 2013 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Андрей Сухотин <p class="b-games-li-points">23</p></li>
+        <li class="b-games-li-player">Екатерина Суханова <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Мария Голубкова <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Владимир Федосков <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Екатерина Макарова</li>
+        <li class="b-games-li-player">Михаил Прибыловский</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>10-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">18 января 2013 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Юлия Кузнецова <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Антон Зобов <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Сергей Кузин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Наталья Касьянова <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Андрей Иванов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Максим Петрунин</li>
+        <li class="b-games-li-player">Григорий Телингатер</li>
+        <li class="b-games-li-player">Дмитрий Бебчук</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>9-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">12 января 2013 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Андрей Федосков <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Артём Калинин <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Владимир Федосков <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Екатерина Макарова <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Дарья Барскова <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Владислав Богданов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Александр Служаков <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Ольга Хамитова <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Сергей Кузин</li>
+        <li class="b-games-li-player">Екатерина Суханова</li>
+        <li class="b-games-li-player">Анастасия Твардовская</li>
+        <li class="b-games-li-player">Анна Верещетина</li>
+        <li class="b-games-li-player">Антон Зобов</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>8-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">28 декабря 2012 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Александр Служаков <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Антон Зобов <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Виктор Викторов <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Екатерина Макарова <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Мария Голубкова</li>
+        <li class="b-games-li-player">Тимофей Манько</li>
+        <li class="b-games-li-player">Владимир Бовшук</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>7-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">21 декабря 2012 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">11</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Антон Зобов <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Андрей Сухотин <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Владимир Бовшук <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Андрей Иванов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Сергей Кузин</li>
+        <li class="b-games-li-player">Ольга Бебчук</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>6-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">14 декабря 2012 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">13</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Антон Зобов <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Денис Левко <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Юлия Кузнецова <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Дмитрий Бебчук <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Мария Сенькина <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Александр Служаков <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Сергей Лыжин</li>
+        <li class="b-games-li-player">Екатерина Макарова</li>
+        <li class="b-games-li-player">Григорий Телингатер</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>5-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">7 декабря 2012 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">11</p></li>
+        <li class="b-games-li-player">Дмитрий Бебчук <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Анастасия Асташкина <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Владимир Бовшук <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Александр Служаков <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Андрей Хмелев</li>
+        <li class="b-games-li-player">Андрей Иванов</li>
+        <li class="b-games-li-player">Григорий Телингатер</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>4-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">30 ноября 2012 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Андрей Иванов <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Антон Зобов <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Андрей Хмелев <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Андрей Сухотин <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Юлия Кузнецова <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Владимир Бовшук <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">1</p></li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>3-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">23 ноября 2012 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Александр Служаков <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Екатерина Макарова <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Андрей Иванов <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Владимир Бовшук <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Антон Зобов <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Николай Муравлёв <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Сергей Лыжин</li>
+        <li class="b-games-li-player">Михаил Прибыловский</li>
+        <li class="b-games-li-player">Андрей Хмелев</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>2-ая игра в кафе «Лето»</h2>
+      <p class="b-games-li-date">16 ноября 2012 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Александр Служаков <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Наталья Касьянова <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Мария Комарова <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">4</p></li>
+
+        <li class="b-games-li-player">Екатерина Макарова <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Андрей Сухотин <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Андрей Иванов <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Антон Зобов <p class="b-games-li-points">2</p></li>
+
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Юлия Кузнецова <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Николай Муравлёв <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Владимир Бовшук</li>
+
+        <li class="b-games-li-player">Анастасия Асташкина</li>
+        <li class="b-games-li-player">Ксения Дубинкина</li>
+        <li class="b-games-li-player">Дарья Манготова</li>
+        <li class="b-games-li-player">Лера Копировская</li>
+      </ul>
+    </li>
+    <li class="b-games-li">
+      <h2>1-ая игра в «Сандвич-бутике»</h2>
+      <p class="b-games-li-date">9 ноября 2012 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Вячеслав Сергеев <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Александр Служаков <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Екатерина Макарова <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Мария Голубкова <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Николай Мягков <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Андрей Сухотин <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Юлия Кузнецова <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Екатерина Бредина <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Антон Зобов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Иван Карпов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Ольга Хамитова</li>
+        <li class="b-games-li-player">Григорий Телингатер</li>
+      </ul>
+    </li>
+  </ul>
+</body>
+</html>
