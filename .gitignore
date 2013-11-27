@@ -1,0 +1,17 @@
+public/tmp/*
+tmp/*
+tags
+public/tmp/*
+log/*
+config/database.yml
+config/email.yml
+*.sw*
+db/schema.rb
+*.dump
+*~
+public/*/cache/*
+config/environments/development.rb
+*.sql
+.jhw-cache/
+jasmine-out.filter.html
+jasmine-out.html
