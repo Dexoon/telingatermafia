@@ -23,7 +23,7 @@ end
 watch( '(.+)\.md' )  do |md|
 #  system 'clear'
   puts "#{md[0]} was updated"
-  result = run("kramdown #{md[0]} --template document.html --smart-quotes lsquo,rsquo,laquo,raquo -o html > #{md[1]}.html")
+  result = run("bundle exec kramdown #{md[0]} --template document.html --smart-quotes lsquo,rsquo,laquo,raquo -o html > #{md[1]}.html")
   growl result
   puts ("\n\n")
 end
