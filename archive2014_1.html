@@ -1,0 +1,505 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Результаты игр в «Мафию»</title>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <style type="text/css">
+    div, li, ul, p {margin:0; padding:0}
+    li {list-style:none}
+    body {font:12px Verdana; color: #222; margin:0 auto}
+
+    h1, h2, h3, h4, h5, h6 {font-size:100%; margin:0; font-weight:normal}
+
+    h1 {font-size:200%; color:#A30000}
+    h2 {font-size:150%; color:#A30000}
+
+    .b-games-li {
+      display:inline-block; vertical-align:top;
+      width:200px;
+      margin:10px; padding:10px 15px;
+      border-style:solid;
+      border-width:1px;
+      border-color:#eee #ccc #ccc #eee;
+    }
+    .b-games-li h2 {margin-bottom:.1em}
+    .b-games-li-date {margin-bottom:.5em; color:#666}
+    .b-games-li-comment {margin-bottom:.5em; color:#999; font-size:80%}
+    .b-games-li-players {margin-top:10px}
+    .b-games-li-player {margin-right:10px; position:relative; padding-bottom:5px; font-size:85%}
+    .b-games-li-points {position:absolute; top:0; right:-10px; font-weight:bold; color:#A30000}
+
+    .b-final,
+    .b-rating {
+      max-width: 400px; width:100%;
+      margin:10px; padding:10px 15px;
+      border-style:solid;
+      border-width:1px;
+      border-color:#eee #ccc #ccc #eee;
+      font-size:90%;
+      background:#fffff7;
+      float:left;
+    }
+    .b-rating-table {margin-top:1em; border-collapse: collapse; border-spacing:0;}
+    .b-rating th {padding:0 0 3px 5px; text-align:left; color:#999; font-size:90%}
+    .b-rating td {padding:3px 0 3px 0; text-align:right}
+    .b-rating td.b-rating-name {text-align:left; padding-right:10px}
+    .b-rating td.b-rating-rating {font-weight:bold; padding-right:0; color:#222}
+    .b-rating td.b-rating-row {font-size:80%; padding-right:10px}
+    .b-rating-player__1 td.b-rating-rating {color:#c70}
+    .b-rating-player__2 td.b-rating-rating {color:#aaa}
+    .b-rating-player__3 td.b-rating-rating {color:#960}
+
+    .b-show-all {text-align:center; border:1px solid #f0f0f0; margin:5px 0}
+    .b-show-all:hover {background:#f0f0f0}
+    .b-show-all-link {display:block; width:100%; color:#A30000; padding:3px 0}
+
+    .b-final {
+      margin-right:50px; padding:10px 45px;
+      width:auto;
+      background:#ffeded;
+    }
+    .b-final th {padding:5px 0 5px 0; text-align:left; color:#999; font-size:90%}
+    .b-final td {padding:2px 8px 2px 0}
+    .b-final-gold {color:#c70; font-weight:bold}
+    .b-final-gold td {padding-bottom:5px}
+
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" language="javascript" charset="utf-8">
+    var records = [];
+    var players = [];
+    $(function(){
+      $('li.b-games-li-player').each(function(i){
+        points = Number($(this).text().replace(/[^0-9]/g,''));
+        player = $(this).text().replace(/ [0-9]*$/,'');
+        records.push({player:player, points:points});
+      });
+
+      $(records).each(function(i,record){
+        var j = findPlayer(record['player']);
+        if(j == -1){
+          players.push({
+            name: record['player'],
+            points: record['points'],
+            visits: 1,
+            rating: record['points'] + 1
+          });
+        } else {
+          players[j]['points'] += record['points'];
+          players[j]['visits'] += 1;
+          players[j]['rating'] = players[j]['points'] + players[j]['visits'];
+        }
+      });
+
+      players.sort(function(a,b){return b['rating']-a['rating']})
+
+      $(players).each(function(i,player){
+        addPlayerRow(player)
+      });
+
+      $('.b-rating-player').slice(14).hide();
+
+      $('.b-rating-player').slice(1,4).each(function(i,s){
+          $(this).addClass('b-rating-player__'+(i+1));
+      });
+
+      $('.b-show-all-link').click(function(){
+        $('.b-rating-player').slice(14).toggle();
+        tmp_text = $(this).data('alt');
+        $(this).data('alt',$(this).html());
+        $(this).html(tmp_text);
+        return false;
+      });
+    });
+
+    function findPlayer(name){
+      var res = -1;
+      $(players).each(function(i,p){
+        if(p['name']==name) res = i;
+      });
+      return res;
+    };
+
+    function addPlayerRow(player){
+      row_number = $('.b-rating-player').length;
+      var row = $('.b-rating-player').first().clone();
+
+      if(player['name'] == 'Григорий Телингатер')
+        row.find('.b-rating-row').html(jQuery('<img>').attr('src', 'gold.png').attr('alt', 'Победитель финального стола'));
+      else
+        row.find('.b-rating-row').html(row_number);
+
+      row.find('.b-rating-name').html(player['name']);
+      row.find('.b-rating-points').html(player['points']);
+      row.find('.b-rating-visits').html(player['visits']);
+      row.find('.b-rating-rating').html(player['rating']);
+      $('.b-rating-table').append(row.show());
+      return true;
+    }
+  </script>
+</head>
+<body>
+  <div class="b-rating">
+    <h1>Рейтинг игроков. Пятый сезон</h1>
+    <a href="rules.html">Правила игры в «Мафию»</a> <br/>
+    <a href="archive2013_3.html">Четвертый сезон(архив)</a>
+    <table class="b-rating-table">
+      <thead>
+        <th></th> <th>Игрок</th> <th title="Получил голосов за лучшего игрока">Голоса</th> <th title="Сколько игр посетил игрок">Посещения</th> <th title="Голоса + Посещения">Рейтинг</th>
+      </thead>
+    	<tr class="b-rating-player" style="display:none">
+        <td class="b-rating-row"></td>
+        <td class="b-rating-name"></td>
+        <td class="b-rating-points"></td>
+        <td class="b-rating-visits"></td>
+        <td class="b-rating-rating"></td>
+    	</tr>
+    </table>
+    <div class="b-show-all">
+      <a href="#" class="b-show-all-link" data-alt="Тринадцать лучших">Показать всех</a>
+    </div>
+  </div>
+  <div style="clear:both"></div>
+  <ul class="b-games">
+    <li class=b-games-li>
+      <h2>17-ая игра в «Парке Горького»</h2>
+      <p class="b-games-li-date"> 24 июля 2014 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">11</p></li>
+        <li class="b-games-li-player">Дарья Корзун <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Вадим Венедиктов <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Алексей Ковалев <p class="b-games-li-points">4</p></li>
+
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Анастасия Серветник <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Ольга Титова <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Екатерина Макарова <p class="b-games-li-points">1</p></li>
+
+        <li class="b-games-li-player">Евгений Афанасьев <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Ирина Попова</li>
+        <li class="b-games-li-player">Мария Чапурина</li>
+        <li class="b-games-li-player">Дамир Самоходов</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>16-ая игра в «Парке Горького»</h2>
+      <p class="b-games-li-date"> 17 июля 2014 года</p>
+      <ul class="b-games-li-players">
+            <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">13</p></li>
+            <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">9</p></li>
+            <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">5</p></li>
+            <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Ольга Титова <p class="b-games-li-points">3</p></li>
+
+            <li class="b-games-li-player">Игорь Коновалов <p class="b-games-li-points">3</p></li>
+            <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">3</p></li>
+            <li class="b-games-li-player">Михаил Монин <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Алексей Ковалев <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Мария Чапурина <p class="b-games-li-points">1</p></li>
+
+            <li class="b-games-li-player">Дарья Корзун <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Евгений Афанасьев <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Дарья Арсланова</li>
+            <li class="b-games-li-player">Анастасия Серветник</li>
+            <li class="b-games-li-player">Тимофей Манько</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>15-ая игра в «Убежище»</h2>
+      <p class="b-games-li-date"> 10 июля 2014 года</p>
+      <ul class="b-games-li-players">
+            <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">8</p></li>
+            <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">8</p></li>
+            <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">5</p></li>
+            <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Игорь Коновалов <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Ксения Давыдова <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Алексей Ковалев</li>
+            <li class="b-games-li-player">Анастасия Серветник</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>14-ая игра в «Парке Горького»</h2>
+      <p class="b-games-li-date"> 3 июля 2014 года</p>
+      <ul class="b-games-li-players">
+            <li class="b-games-li-player">Алексей Ковалев <p class="b-games-li-points">10</p></li>
+            <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">8</p></li>
+            <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">5</p></li>
+            <li class="b-games-li-player">Борис Кондрашкин <p class="b-games-li-points">5</p></li>
+            <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">3</p></li>
+            <li class="b-games-li-player">Павел Пучков <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Анна Филиппова <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Анастасия Серветник <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Мария Чапурина</li>
+            <li class="b-games-li-player">Евгений Афанасьев</li>
+            <li class="b-games-li-player">Наталья Ефремова</li>
+            <li class="b-games-li-player">Игорь Коновалов</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>13-ая игра в «Убежище»</h2>
+      <p class="b-games-li-date"> 26 июня 2014 года</p>
+      <ul class="b-games-li-players">
+            <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">7</p></li>
+            <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">7</p></li>
+            <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">5</p></li>
+            <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">3</p></li>
+            <li class="b-games-li-player">Глеб Белицкий <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Наталья Ефремова <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Нинель Трубецкая <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Игорь Коновалов</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>12-ая игра в «Убежище»</h2>
+      <p class="b-games-li-date"> 19 июня 2014 года</p>
+      <ul class="b-games-li-players">
+            <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">10</p></li>
+            <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">7</p></li>
+            <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Андрей Лобунов <p class="b-games-li-points">5</p></li>
+            <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Глеб Белицкий <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">3</p></li>
+            <li class="b-games-li-player">Игорь Коновалов <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Анастасия Серветник</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>11-ая игра в «Парке Горького»</h2>
+      <p class="b-games-li-date"> 5 июня 2014 года</p>
+      <ul class="b-games-li-players">
+            <li class="b-games-li-player">Анна Филиппова <p class="b-games-li-points">8</p></li>
+            <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">7</p></li>
+            <li class="b-games-li-player">Константин Брусенцев <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">5</p></li>
+            <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">5</p></li>
+            <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Андрей Лобунов <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Артур Языков <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Николай Николаев <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Мария Чапурина <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Полина Цветкова</li>
+            <li class="b-games-li-player">Зоя Перлова</li>
+            <li class="b-games-li-player">Ольга Попова</li>
+            <li class="b-games-li-player">Евгений Афанасьев</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>10-ая игра в «Стрейнджерс»</h2>
+      <p class="b-games-li-date"> 27 мая 2014 года</p>
+      <ul class="b-games-li-players">
+            <li class="b-games-li-player">Анна Степанова <p class="b-games-li-points">10</p></li>
+            <li class="b-games-li-player">Михаил Монин <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Рэй Гасымов <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">3</p></li>
+            <li class="b-games-li-player">Денис Охотников <p class="b-games-li-points">3</p></li>
+            <li class="b-games-li-player">Владимир Федосков <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Анна Филиппова <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Арсений Трунин <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Мария Арискина <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Ольга Титова <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">0</p></li>
+            <li class="b-games-li-player">Дамир Самоходов <p class="b-games-li-points">0</p></li>
+            <li class="b-games-li-player">Дмитрий Винокуров <p class="b-games-li-points">0</p></li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>9-ая игра в «Парке Горького»</h2>
+      <p class="b-games-li-date"> 22 мая 2014 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Мария Чапурина <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Анна Филиппова <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Станислав Антипов <p class="b-games-li-points">5</p></li>
+
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Ольга Титова <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">2</p></li>
+
+        <li class="b-games-li-player">Дамир Самоходов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Полина Цветкова <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Наталья Касьянова <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Юрий Владимиров</li>
+        <li class="b-games-li-player">Борис Кондрашкин</li>
+
+        <li class="b-games-li-player">Максим Янчевский</li>
+        <li class="b-games-li-player">Андрей Иванов</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>8-ая игра в «Стрейнджерс»</h2>
+      <p class="b-games-li-date"> 8 мая 2014 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Ольга Титова <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">5</p></li>
+
+        <li class="b-games-li-player">Константин Брусенцев <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Мария Арискина <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Алина Денисова</li>
+        <li class="b-games-li-player">Полина Цветкова</li>
+
+        <li class="b-games-li-player">Эльдар Далелов</li>
+        <li class="b-games-li-player">Глеб Белицкий</li>
+        <li class="b-games-li-player">Андрей Сухотин</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>7-ая игра в «Стрейнджерс»</h2>
+      <p class="b-games-li-date"> 24 апреля 2014 года</p>
+      <ul class="b-games-li-players">
+            <li class="b-games-li-player">Эмма Гаспарян <p class="b-games-li-points">11</p></li>
+            <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">10</p></li>
+            <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">9</p></li>
+            <li class="b-games-li-player">Константин Брусенцев <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">5</p></li>
+
+            <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Мария Арискина <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Петр Старокадомский <p class="b-games-li-points">2</p></li>
+            <li class="b-games-li-player">Полина Цветкова <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">1</p></li>
+
+            <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Анна Филиппова</li>
+            <li class="b-games-li-player">Григорий Телингатер</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>6-ая игра в «Стрейнджерс»</h2>
+      <p class="b-games-li-date"> 17 апреля 2014 года</p>
+      <ul class="b-games-li-players">
+            <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">10</p></li>
+            <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">9</p></li>
+            <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Константин Брусенцев <p class="b-games-li-points">6</p></li>
+            <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">5</p></li>
+
+            <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">5</p></li>
+            <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Марат Абагян <p class="b-games-li-points">4</p></li>
+            <li class="b-games-li-player">Анна Филиппова <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Сергей Кузин <p class="b-games-li-points">1</p></li>
+
+            <li class="b-games-li-player">Андрей Иванов <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Владимир Федосков <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">1</p></li>
+            <li class="b-games-li-player">Мария Арискина</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>5-ая игра в «Стрейнджерс»</h2>
+      <p class="b-games-li-date"> 10 апреля 2014 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Константин Брусенцев <p class="b-games-li-points">19</p></li>
+        <li class="b-games-li-player">Ольга Титова <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Мария Арискина <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Сергей Кузин</li>
+        <li class="b-games-li-player">Марат Абагян</li>
+        <li class="b-games-li-player">Максим Петрунин</li>
+        <li class="b-games-li-player">Дарья Арсланова</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>4-ая игра в «Стрейнджерс»</h2>
+      <p class="b-games-li-date"> 3 апреля 2014 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Мария Арискина <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Константин Брусенцев <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Павел Пучков <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Марат Абагян <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Тося Шатовская <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Михаил Монин</li>
+        <li class="b-games-li-player">Полина Цветкова</li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+      <h2>3-ая игра в «Стрейнджерс»</h2>
+      <p class="b-games-li-date"> 27 марта 2014 года</p>
+      <ul class="b-games-li-players">
+        <li class="b-games-li-player">Константин Брусенцев <p class="b-games-li-points">15</p></li>
+        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Сергей Кузин <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Мария Арискина <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Марат Абагян <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Вячеслав Сергеев <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Евгений Смирнов <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Дарья Арсланова <p class="b-games-li-points">1</p></li>
+      </ul>
+    </li>
+    <li class=b-games-li>
+    <h2>2-ая игра в «Стрейнджерс»</h2>
+    <p class="b-games-li-date"> 20 февраля 2014 года</p>
+    <ul class="b-games-li-players">
+      <li class="b-games-li-player">Сергей Кузин <p class="b-games-li-points">10</p></li>
+      <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">10</p></li>
+      <li class="b-games-li-player">Ольга Бебчук <p class="b-games-li-points">6</p></li>
+      <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">4</p></li>
+      <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">3</p></li>
+      <li class="b-games-li-player">Мария Арискина <p class="b-games-li-points">2</p></li>
+      <li class="b-games-li-player">Марат Абагян <p class="b-games-li-points">2</p></li>
+      <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">3</p></li>
+      <li class="b-games-li-player">Тимофей Манько <p class="b-games-li-points">3</p></li>
+      <li class="b-games-li-player">Алёна Денисенко <p class="b-games-li-points">1</p></li>
+      <li class="b-games-li-player">Полина Цветкова</li>
+    </ul>
+    </li>
+    <li class=b-games-li>
+    <h2>1-ая игра в «Убежище»</h2>
+    <p class="b-games-li-date"> 13 марта 2014 года</p>
+    <ul class="b-games-li-players">
+      <li class="b-games-li-player">Сергей Кузин <p class="b-games-li-points">12</p></li>
+      <li class="b-games-li-player">Мария Арискина <p class="b-games-li-points">7</p></li>
+      <li class="b-games-li-player">Полина Цветкова <p class="b-games-li-points">5</p></li>
+      <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">4</p></li>
+      <li class="b-games-li-player">Екатерина Петрунина <p class="b-games-li-points">3</p></li>
+
+      <li class="b-games-li-player">Марат Абагян <p class="b-games-li-points">3</p></li>
+      <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">3</p></li>
+      <li class="b-games-li-player">Михаил Монин <p class="b-games-li-points">3</p></li>
+      <li class="b-games-li-player">Константин Брусенцев <p class="b-games-li-points">2</p></li>
+      <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">2</p></li>
+
+      <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">2</p></li>
+      <li class="b-games-li-player">Вячеслав Сергеев</li>
+    </ul>
+    </li>
+  </ul>
+  </body>
+  </html>
