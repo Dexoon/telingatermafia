@@ -92,7 +92,7 @@
         }
       });
 
-      players.sort(function(a,b){return b['rating']-a['rating']})
+      players.sort(comparePlayers);
 
       $(players).each(function(i,player){
         addPlayerRow(player)
@@ -112,6 +112,16 @@
         return false;
       });
     });
+
+    function comparePlayers(a,b){
+      var result = b['rating']-a['rating'];
+
+      if(result === 0){
+        result = b['visits']-a['visits'];
+      }
+
+      return result;
+    }
 
     function findPlayer(name){
       var res = -1;
