@@ -71,8 +71,8 @@
     var players = [];
     $(function(){
       $('li.b-games-li-player').each(function(i){
-        points = Number($(this).text().replace(/[^0-9]/g,''));
-        player = $(this).text().replace(/ [0-9]*$/,'');
+        points = Number($(this).text().replace(/[^\-0-9]/g,''));
+        player = $(this).text().replace(/ [\-0-9]*$/,'');
         records.push({player:player, points:points});
       });
 
