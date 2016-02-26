@@ -2,7 +2,7 @@
 myvar=`cat`
 
 echo "    <li class="b-games-li">
-      <h2>${1}-ая игра в «Кругозоре»</h2>
+      <h2>${1}-ая игра в «Сухаревой башне»</h2>
       <p class=\"b-games-li-date\"> ${2} 2016 года</p>
       <ul class=\"b-games-li-players\">"
 
