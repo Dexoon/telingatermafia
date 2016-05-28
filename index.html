@@ -69,6 +69,7 @@
   <script type="text/javascript" language="javascript" charset="utf-8">
     var records = [];
     var players = [];
+    var number_of_best = 12;
     $(function(){
       $('li.b-games-li-player').each(function(i){
         points = Number($(this).text().replace(/[^\-0-9]/g,''));
@@ -98,14 +99,14 @@
         addPlayerRow(player)
       });
 
-      $('.b-rating-player').slice(14).hide();
+      $('.b-rating-player').slice(number_of_best+1).hide();
 
       $('.b-rating-player').slice(1,4).each(function(i,s){
           $(this).addClass('b-rating-player__'+(i+1));
       });
 
       $('.b-show-all-link').click(function(){
-        $('.b-rating-player').slice(13).toggle();
+        $('.b-rating-player').slice(number_of_best+1).toggle();
         tmp_text = $(this).data('alt');
         $(this).data('alt',$(this).html());
         $(this).html(tmp_text);
