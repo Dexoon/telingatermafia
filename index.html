@@ -115,12 +115,11 @@
       });
     });
 
-
     function preparePoints(points) {
-        var COUNT_DAYS = 15;
+        var SKIP_DAYS = 2;
         points = points.sort(function(a, b) { return a - b; });
-        var candidates = points.slice(COUNT_DAYS).filter(function(el) { return el < 0; });
-        return points.slice(0, COUNT_DAYS).concat(candidates);
+        var candidates = points.slice(0, SKIP_DAYS).filter(function(el) { return el < 0; });
+        return points.slice(SKIP_DAYS).concat(candidates);
 
     };
 
@@ -362,7 +361,7 @@
         <li class="b-games-li-player">Ксения Синицина</li>
         <li class="b-games-li-player">Андрей Черненко</li>
         <li class="b-games-li-player">Станислав Димитриев</li>
-        <li class="b-games-li-player">Анна Воронцова - <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Анна Воронцова <p class="b-games-li-points">1</p></li>
         <li class="b-games-li-player">Роман Ковалев <p class="b-games-li-points">-1</p></li>
       </ul>
     </li>
