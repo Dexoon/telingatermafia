@@ -82,14 +82,15 @@
       });
 
       for (var player in records) {
-          var points = records[player].reduce(function(a, b) { return a + b; }, 0);
-          var visits = records[player].length;
+          var points = preparePoints(records[player]);
+          var pointsSum = points.reduce(function(a, b) { return a + b; }, 0);
+          var visits = points.length;
 
           players.push({
               name: player,
-              points: points,
+              points: pointsSum,
               visits: visits,
-              rating: visits + points
+              rating: visits + pointsSum
           });
       };
 
@@ -113,6 +114,15 @@
         return false;
       });
     });
+
+
+    function preparePoints(points) {
+        var COUNT_DAYS = 15;
+        points = points.sort(function(a, b) { return a - b; });
+        var candidates = points.slice(COUNT_DAYS).filter(function(el) { return el < 0; });
+        return points.slice(0, COUNT_DAYS).concat(candidates);
+
+    };
 
     function comparePlayers(a,b){
       var result = b['rating']-a['rating'];
