@@ -116,10 +116,10 @@
     });
 
     function preparePoints(points) {
-        var SKIP_DAYS = 2;
-        points = points.sort(function(a, b) { return a - b; });
-        var candidates = points.slice(0, SKIP_DAYS).filter(function(el) { return el < 0; });
-        return points.slice(SKIP_DAYS).concat(candidates);
+        var SKIP_DAYS = 15;
+        points = points.sort(function(a, b) { return b - a; });
+        var candidates = points.slice(SKIP_DAYS).filter(function(el) { return el < 0; });
+        return points.slice(0, SKIP_DAYS).concat(candidates);
 
     };
 
