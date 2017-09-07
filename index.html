@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html lang="ru">
 <head>
-	<meta charset="UTF-8">
-	<title>Результаты игр в «Мафию»</title>
+  <meta charset="UTF-8">
+  <title>Результаты игр в «Мафию»</title>
   <link rel="icon" type="image/png" href="favicon.png"/>
   <style type="text/css">
     div, li, ul, p {margin:0; padding:0}
@@ -67,31 +67,32 @@
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" language="javascript" charset="utf-8">
-    var records = [];
+    var records = {};
     var players = [];
     var number_of_best = 12;
     $(function(){
       $('li.b-games-li-player').each(function(i){
         points = Number($(this).text().replace(/[^\-0-9]/g,''));
         player = $(this).text().replace(/ [\-0-9]*$/,'');
-        records.push({player:player, points:points});
+        if(!records[player]) {
+            records[player] = [];
+        }
+
+        records[player].push(points);
       });
 
-      $(records).each(function(i,record){
-        var j = findPlayer(record['player']);
-        if(j == -1){
+      for (var player in records) {
+          var points = preparePoints(records[player]);
+          var pointsSum = points.reduce(function(a, b) { return a + b; }, 0);
+          var visits = points.length;
+
           players.push({
-            name: record['player'],
-            points: record['points'],
-            visits: 1,
-            rating: record['points'] + 1
+              name: player,
+              points: pointsSum,
+              visits: visits,
+              rating: visits + pointsSum
           });
-        } else {
-          players[j]['points'] += record['points'];
-          players[j]['visits'] += 1;
-          players[j]['rating'] = players[j]['points'] + players[j]['visits'];
-        }
-      });
+      };
 
       players.sort(comparePlayers);
 
@@ -113,6 +114,14 @@
         return false;
       });
     });
+
+    function preparePoints(points) {
+        var SKIP_DAYS = 15;
+        points = points.sort(function(a, b) { return b - a; });
+        var candidates = points.slice(SKIP_DAYS).filter(function(el) { return el < 0; });
+        return points.slice(0, SKIP_DAYS).concat(candidates);
+
+    };
 
     function comparePlayers(a,b){
       var result = b['rating']-a['rating'];
@@ -152,9 +161,9 @@
 </head>
 <body>
   <div class="b-rating">
-    <h1>Рейтинг игроков. Одиннадцатый сезон</h1>
+    <h1>Рейтинг игроков. Тринадцатый сезон</h1>
     <a href="rules.html">Правила игры в «Мафию»</a> <br/>
-    <a href="archive2016_2.html">Десятый сезон(архив)</a>
+    <a href="archive2017_2.html">Тринадцатый сезон(архив)</a>
     <table class="b-rating-table">
       <thead>
         <th></th> <th>Игрок</th> <th title="Получил голосов за лучшего игрока">Голоса</th> <th title="Сколько игр посетил игрок">Посещения</th> <th title="Голоса + Посещения">Рейтинг</th>
@@ -173,338 +182,130 @@
   </div>
   <div style="clear:both"></div>
     <li class=b-games-li>
-      <h2>13-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 29 декабря 2016 года</p>
-      <ul class="b-games-li-players">
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">11</p></li>
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">10</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">10</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">7</p></li>
-        <li class="b-games-li-player">Андрей Осипов <p class="b-games-li-points">7</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Ксения Синицина <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Роман Ковалёв <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Иван Анохин <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Станислав Дмитриев <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Полина Максакова <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Николай Валетов</li>
-        <li class="b-games-li-player">Константин Романюк <p class="b-games-li-points">-2</p></li>
-      </ul>
-    </li>
-    <li class=b-games-li>
-      <h2>12-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 22 декабря 2016 года</p>
-      <ul class="b-games-li-players">
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">10</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">8</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">7</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">7</p></li>
-        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">7</p></li>
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Иван Анохин <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Роман Ковалёв <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Полина Максакова <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Константин Романюк <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Андрей Осипов <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Ирина Воронкина</li>
-        <li class="b-games-li-player">Ирина Протасеня</li>
-        <li class="b-games-li-player">Сергей Лыжин</li>
-        <li class="b-games-li-player">Николай Валетов</li>
-      </ul>
-    </li>
-    <li class=b-games-li>
-      <h2>11-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 15 декабря 2016 года</p>
-      <ul class="b-games-li-players">
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">12</p></li>
-        <li class="b-games-li-player">Роман Ковалёв <p class="b-games-li-points">9</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">7</p></li>
-        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Андрей Осипов <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Искандер Залялов <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Полина Максакова <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Дарья Лови <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Николай Валетов</li>
-        <li class="b-games-li-player">Мурат Тукмуратов <p class="b-games-li-points">-2</p></li>
-      </ul>
-    </li>
-    <li class=b-games-li>
-      <h2>10-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 8 декабря 2016 года</p>
-      <ul class="b-games-li-players">
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">12</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">10</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">7</p></li>
-        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Искандер Залялов <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Полина Максакова <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Константин Романюк <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Ольга Титова</li>
-        <li class="b-games-li-player">Михаил Прибыловский</li>
-      </ul>
-    </li>
-    <li class=b-games-li>
-      <h2>9-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 1 декабря 2016 года</p>
-      <ul class="b-games-li-players">
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">9</p></li>
-        <li class="b-games-li-player">Дарья Лови <p class="b-games-li-points">8</p></li>
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">5</p></li>
-
-        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Константин Романюк <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Андрей Осипов <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Андрей Данилов <p class="b-games-li-points">4</p></li>
-
-        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Полина Максакова <p class="b-games-li-points">2</p></li>
-
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Роман Ковалёв <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Анжелика Черненко</li>
-        <li class="b-games-li-player">Ирина Деева</li>
-        <li class="b-games-li-player">Искандер Залялов</li>
-      </ul>
-    </li>
-    <li class=b-games-li>
-      <h2>8-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 24 ноября 2016 года</p>
-      <ul class="b-games-li-players">
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">14</p></li>
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">8</p></li>
-        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Ольга Казекина <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Ирина Протасеня <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Константин Романюк <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Анна Дорофеева <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Андрей Казекин <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Анна Громович</li>
-        <li class="b-games-li-player">Сергей Скрябин</li>
-        <li class="b-games-li-player">Максим Петрунин</li>
-        <li class="b-games-li-player">Нико Тагиев</li>
-        <li class="b-games-li-player">Андрей Осипов <p class="b-games-li-points">-3</p></li>
-      </ul>
-    </li>
-    <li class=b-games-li>
-      <h2>7-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 17 ноября 2016 года</p>
-      <ul class="b-games-li-players">
-        <li class="b-games-li-player">Александр Канцлер <p class="b-games-li-points">10</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">9</p></li>
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">8</p></li>
-        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Полина Максакова <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Нико Тагиев <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Андрей Осипов <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Анна Громович <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Ирина Протасеня <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Анна Дорофеева</li>
-        <li class="b-games-li-player">Дмитрий Журжалин</li>
-        <li class="b-games-li-player">Константин Романюк</li>
-        <li class="b-games-li-player">Николай Валетов</li>
-      </ul>
-    </li>
-    <li class=b-games-li>
-      <h2>6-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 10 ноября 2016 года</p>
-      <ul class="b-games-li-players">
-        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">11</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">9</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">8</p></li>
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">7</p></li>
-        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">7</p></li>
-
-        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">3</p></li>
-
-        <li class="b-games-li-player">Василий Трунин <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Павел Бочкарев <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Искандер Залялов <p class="b-games-li-points">2</p></li>
-
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Константин Романюк</li>
-        <li class="b-games-li-player">Кирилл Хаит</li>
-        <li class="b-games-li-player">Андрей Осипов</li>
-        <li class="b-games-li-player">Алексей Белоцерковский</li>
-      </ul>
-    </li>
-    <li class=b-games-li>
       <h2>5-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 3 ноября 2016 года</p>
+      <p class="b-games-li-date"> 24 августа 2017 года</p>
       <ul class="b-games-li-players">
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">10</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">8</p></li>
-        <li class="b-games-li-player">Анастасия Бардина <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Ирина Протасеня <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Мария Уракова <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Анастасия Серветник <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">12</p></li>
+        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">9</p></li>
+        <li class="b-games-li-player">Роман Ковалев <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Константин Романюк <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Анна Хавбошина <p class="b-games-li-points">4</p></li>
         <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Станислав Жилкин <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Дарья Лови <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Анна Дорофеева</li>
-        <li class="b-games-li-player">Наталья Юрина</li>
-        <li class="b-games-li-player">Андрей Черненко</li>
-        <li class="b-games-li-player">Константин Романюк</li>
-        <li class="b-games-li-player">Нико Тагиев</li>
+        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Олег Кононов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Арсений Трунин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Андрей Черненко <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Булат Фатыхов</li>
+        <li class="b-games-li-player">Бан Фам Хоанг Ань</li>
+        <li class="b-games-li-player">Искандер Залялов</li>
+        <li class="b-games-li-player">Иван Анохин</li>
+        <li class="b-games-li-player">Олег Кононов</li>
+        <li class="b-games-li-player">Сергей Лыжин</li>
       </ul>
     </li>
     <li class=b-games-li>
       <h2>4-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 27 октября 2016 года</p>
+      <p class="b-games-li-date"> 17 августа 2017 года</p>
       <ul class="b-games-li-players">
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">10</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Нико Тагиев <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Станислав Жилкин <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Анна Дорофеева</li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">10</p></li>
+        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Роман Ковалев <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Бан Фам Хоанг Ань <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Анна Дмитриенко <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Искандер Залялов <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Ирина Воронкина</li>
         <li class="b-games-li-player">Ксения Синицина</li>
-        <li class="b-games-li-player">Искандер Залялов</li>
-        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">-2</p></li>
+        <li class="b-games-li-player">Олег Кононов <p class="b-games-li-points">-2</p></li>
       </ul>
     </li>
     <li class=b-games-li>
       <h2>3-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 20 октября 2016 года</p>
+      <p class="b-games-li-date"> 10 августа 2017 года</p>
       <ul class="b-games-li-players">
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">14</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">9</p></li>
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">8</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">8</p></li>
-        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Искандер Залялов <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Роман Ковалёв <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Анна Дорофеева <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Ксения Синицина <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Роман Ковалев <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Ксения Синицина <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Фиса Васильева <p class="b-games-li-points">5</p></li>
+        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Булат Фатыхов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Олег Кононов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Искандер Залялов <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Лев Замковский <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Анастасия Бардина <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Илья Журавский <p class="b-games-li-points">1</p></li>
         <li class="b-games-li-player">Ирина Протасеня <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Андрей Черненко <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Полина Максакова</li>
-        <li class="b-games-li-player">Никита Ерофеев</li>
-        <li class="b-games-li-player">Михаил Прибыловский</li>
+        <li class="b-games-li-player">Юлиана Дуба <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Андрей Черненко</li>
+        <li class="b-games-li-player">Елена Фомченкова</li>
+        <li class="b-games-li-player">Ольга Феоктистова</li>
+        <li class="b-games-li-player">Сергей Бойко</li>
+        <li class="b-games-li-player">Фам Бан Хоанг Ань</li>
       </ul>
     </li>
     <li class=b-games-li>
       <h2>2-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 13 октября 2016 года</p>
+      <p class="b-games-li-date"> 3 августа 2017 года</p>
       <ul class="b-games-li-players">
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">8</p></li>
         <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">7</p></li>
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Евгения Щицына <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Василий Трунин <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Искандер Залялов <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Роман Ковалёв <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Роман Ковалев <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Ксения Синицина <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Юлиана Дуба <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Ирина Протасеня <p class="b-games-li-points">1</p></li>
         <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Полина Максакова <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Дмитрий Анискин <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Ксения Синицина</li>
-        <li class="b-games-li-player">Ирина Протасеня</li>
-        <li class="b-games-li-player">Никита Ерофеев</li>
-        <li class="b-games-li-player">Андрей Черненко <p class="b-games-li-points">-2</p></li>
+        <li class="b-games-li-player">Андрей Черненко <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Константин Романюк <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Искандер Залялов <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Анна Хавбошина</li>
+        <li class="b-games-li-player">Олег Кононов</li>
+        <li class="b-games-li-player">Фам Бан Хоанг Ань <p class="b-games-li-points">-2</p></li>
       </ul>
     </li>
     <li class=b-games-li>
       <h2>1-ая игра в «Сухаревой башне»</h2>
-      <p class="b-games-li-date"> 6 октября 2016 года</p>
+      <p class="b-games-li-date"> 27 июля 2017 года</p>
       <ul class="b-games-li-players">
-        <li class="b-games-li-player">Михаил Прибыловский <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Полина Максакова <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Ирина Воронкина <p class="b-games-li-points">6</p></li>
-        <li class="b-games-li-player">Сергей Лыжин <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Сергей Ефименко <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Станислав Димитриев <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Зоя Перлова <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Максим Петрунин <p class="b-games-li-points">5</p></li>
-        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">4</p></li>
-        <li class="b-games-li-player">Василий Трунин <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Андрей Черненко <p class="b-games-li-points">3</p></li>
-        <li class="b-games-li-player">Алексей Белоцерковский <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Николай Валетов <p class="b-games-li-points">2</p></li>
-        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">1</p></li>
-        <li class="b-games-li-player">Роман Ковалёв</li>
-        <li class="b-games-li-player">Дарья Лови</li>
-        <li class="b-games-li-player">Искандер Залялов</li>
+        <li class="b-games-li-player">Григорий Телингатер <p class="b-games-li-points">8</p></li>
+        <li class="b-games-li-player">Ирина Протасеня <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Максим Янчевский <p class="b-games-li-points">7</p></li>
+        <li class="b-games-li-player">Дарья Лови <p class="b-games-li-points">6</p></li>
+        <li class="b-games-li-player">Роман Ковалев <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Константин Романюк <p class="b-games-li-points">4</p></li>
+        <li class="b-games-li-player">Карина Бабальянц <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Искандер Залялов <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Анжелика Черненко <p class="b-games-li-points">3</p></li>
+        <li class="b-games-li-player">Андрей Черненко <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Илья Сухоруков <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Алексей Амелин <p class="b-games-li-points">2</p></li>
+        <li class="b-games-li-player">Иван Анохин <p class="b-games-li-points">1</p></li>
+        <li class="b-games-li-player">Ирина Воронкина</li>
+        <li class="b-games-li-player">Николай Валетов</li>
       </ul>
     </li>
   </body>
